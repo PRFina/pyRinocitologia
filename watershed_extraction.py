@@ -9,6 +9,7 @@ import os
 import time
 import numpy as np
 import cv2
+import configparser
 
 
 from skimage import morphology
@@ -20,7 +21,7 @@ import matplotlib.patches as mpatches
 from scipy import ndimage
 from datetime import timedelta
 
-import  config
+import config
 
 
 def detections_cells(image):
@@ -48,10 +49,10 @@ def detections_cells(image):
                                labels=thresh)
 
     # perform a connected component analysis on the local peaks,
-    # using 8-connectivity, then appy the Watershed algorithm
+    # using 8-connectivity, then apply the Watershed algorithm
     markers = ndimage.label(local_max, structure=np.ones((3, 3)))[0]
     labels = morphology.watershed(-d, markers, mask=thresh)
-
+    
     # Remove lables too small
     filtered_labels = np.copy(labels)
     component_sizes = np.bincount(labels.ravel())
@@ -106,12 +107,17 @@ def extraction_cells(image, k, outPath):
 
 # Main execution
 
+
 if __name__ == "__main__":
 
+    config = configparser.ConfigParser()
+    config.read(config.ini)
     start_time = time.monotonic()
     c = 0
 
-    path = os.path.join(os.getcwd(), config.APP_CONFIG['input_dir'])
+    path = os.path.join(os.getcwd(), config['Paths']['input_dir'])
+    outpath = os.path.join(os.getcwd(), config['Paths']['cells_dir'])
+
     for infile in glob.glob(os.path.join(path, '*.png')):
         print(infile)
 
@@ -121,7 +127,7 @@ if __name__ == "__main__":
         img_or = cv2.cvtColor(img_or, cv2.COLOR_BGR2RGB)
 
         try:
-            outpath = os.path.join(os.getcwd(), config.APP_CONFIG['cells_dir'])
+        try:
             extraction_cells(img_or, c, outpath)
         except ValueError:
             continue
