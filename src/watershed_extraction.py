@@ -111,7 +111,7 @@ def extraction_cells(image, k, outPath):
 if __name__ == "__main__":
 
     config = configparser.ConfigParser()
-    config.read(config.ini)
+    config.read("../config.ini")
     start_time = time.monotonic()
     c = 0
 
