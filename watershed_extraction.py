@@ -127,7 +127,6 @@ if __name__ == "__main__":
         img_or = cv2.cvtColor(img_or, cv2.COLOR_BGR2RGB)
 
         try:
-        try:
             extraction_cells(img_or, c, outpath)
         except ValueError:
             continue
