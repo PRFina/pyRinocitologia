@@ -18,7 +18,3 @@ def displayDatasetMetadata(dataset_path):
             display(Markdown(buildMessage(json.load(jsonFile))))
     else:
         display((Markdown("** NO report (metainfo.json file) is available!**")))
-
-
-if __name__ == "__main__":
-    displayDatasetMetadata("")
