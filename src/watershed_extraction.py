@@ -21,8 +21,6 @@ import matplotlib.patches as mpatches
 from scipy import ndimage
 from datetime import timedelta
 
-import config
-
 
 def detections_cells(image):
 
@@ -72,8 +70,7 @@ def extraction_cells(image, k, outPath):
     print("Saving extracted cells in:" + outPath)
     filtered_labels = detections_cells(image)
 
-    i = 0
-    for region in regionprops(filtered_labels):
+    for i, region in enumerate(regionprops(filtered_labels)):
 
         # draw circle around cells
         minr, minc, maxr, maxc = region.bbox
@@ -103,22 +100,20 @@ def extraction_cells(image, k, outPath):
             print(filepath)
             io.imsave(filepath, cell)
 
-        i += 1
-
 # Main execution
 
 
 if __name__ == "__main__":
 
     config = configparser.ConfigParser()
-    config.read("../config.ini")
+    config.read("config.ini")
     start_time = time.monotonic()
-    c = 0
+
 
     path = os.path.join(os.getcwd(), config['Paths']['input_dir'])
     outpath = os.path.join(os.getcwd(), config['Paths']['cells_dir'])
 
-    for infile in glob.glob(os.path.join(path, '*.png')):
+    for i, infile in enumerate(glob.glob(os.path.join(path, '*.png'))):
         print(infile)
 
         img_or = cv2.imread(infile)
@@ -127,10 +122,9 @@ if __name__ == "__main__":
         img_or = cv2.cvtColor(img_or, cv2.COLOR_BGR2RGB)
 
         try:
-            extraction_cells(img_or, c, outpath)
+            extraction_cells(img_or, i, outpath)
         except ValueError:
             continue
-        c = c + 1
 
     end_time = time.monotonic()
     print("Cell extraction time: {}".format(timedelta(seconds=end_time - start_time)))
