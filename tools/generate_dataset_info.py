@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Generate a pre-filled template file for dataset metadata")
 
+    # FIXME: fix mispelling error in the below section
     parser.add_argument("--show", action='store_true', help="Show file content in stdout")
     parser.add_argument("-o", "--outfile", default="info.json", help="Output file")
     parser.add_argument("-i", "--iteration", default="2", help="Project iteration which dataset belongs to")
@@ -24,7 +25,10 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--technique", default="Cytospin", help="Any technique used in data preparation phase")
     parser.add_argument("-s", "--staining", default="MGG", help="Staining used in data preparation phase")
     parser.add_argument("-p", "--people", nargs="+", default=["Dott. Matteo Gelardi", "Pio Raffale Fina", "Francesco Troccoli"], help="People that contibuted to the dataset")
+    parser.add_argument("--extra", nargs="+", help="List of <key>:<value> to add to the file")
 
+    # TODO: add argument to parse an arbitrary list of <key>:<value> and add to metadata dict
+    # eg: python generate_dataset_info --extra "key#1:val#1"
     args = vars(parser.parse_args())  # parse and build arguments dict
 
     datetime = dt.datetime.now()
@@ -43,12 +47,15 @@ if __name__ == "__main__":
     metadata["staining"] = args["staining"]
     metadata["people"] = args["people"]
 
+    pairs = args["extra"]
+    if pairs is not None:
+        for pair in pairs:
+            k, v = pair.split(":")
+            metadata[k] = v
+
     with open(args["outfile"], "w") as file:
         json.dump(metadata, file, indent=4)
         print("File created successfully!")
 
-    print(args)
-    if args["show"] == True:
-        print("************\n{}\n************".format(json.dumps(metadata, indent=4)))
-
-
+    if args["show"]:
+        print("************************\n{}\n************************".format(metadata))
