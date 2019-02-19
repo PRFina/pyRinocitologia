@@ -5,6 +5,14 @@ import argparse
 
 
 def generate_id():
+    """
+    Generate a unique id based on the current date and time.
+
+    Note that in this context md5 hash collision or other vulnerabilities are not
+    issues.
+
+    :return: the md5 digest string as id
+    """
     date = dt.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     md5 = hashlib.md5()
     md5.update(date.encode())

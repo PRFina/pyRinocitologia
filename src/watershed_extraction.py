@@ -3,23 +3,20 @@
 # OpenCv library
 # ---------------------------------------------------
 
-# import the necessary packages
 import glob
 import os
 import time
-import numpy as np
-import cv2
+import logging
 import configparser
+from datetime import timedelta
 
-
+import numpy as np
+from scipy import ndimage
+import cv2
 from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-
-
-from scipy import ndimage
-from datetime import timedelta
 
 
 def detect_cells(image):
@@ -67,7 +64,6 @@ def detect_cells(image):
 
 def extract_cells(image, image_index, out_path):
 
-    print("Saving extracted cells in:" + out_path)
     filtered_labels = detect_cells(image)
 
     regions = regionprops(filtered_labels)
@@ -89,13 +85,15 @@ def extract_cells(image, image_index, out_path):
 
         cell = image[minr:maxr + 20, minc:maxc + 20]  # crop image
 
-        filepath = os.path.join(out_path, "Img#" + str(image_index) + "_cell#" + str(i) + ".png")
+        img_name = "img#" + str(image_index) + "_cell#" + str(i) + ".png"
+        filepath = os.path.join(out_path, img_name)
         io.imsave(filepath, cell)
-        print(filepath)
+
+        logging.info("extracted cell: {}".format(img_name))
 
 
 if __name__ == "__main__":
-
+    logging.basicConfig(level=logging.INFO, format="[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s")
     config = configparser.ConfigParser()
     config.read("config.ini")
     start_time = time.monotonic()
@@ -103,8 +101,15 @@ if __name__ == "__main__":
     inpath = config['Paths']['input_dir']
     outpath = config['Paths']['cells_dir']
 
-    for i, infile in enumerate(glob.glob(os.path.join(inpath, '*.png'))):
-        print(infile)
+    logging.info("input path: {}".format(inpath))
+    logging.info("extracted cells will be saved in: {}".format(outpath))
+
+    files = glob.glob(os.path.join(inpath, '*.png'))
+    if not files:
+        logging.error("{} directory is empty! No image to process".format(inpath))
+
+    for i, infile in enumerate(files):
+        logging.info("processing {} image".format(infile))
 
         img_or = cv2.imread(infile)
 
@@ -117,4 +122,4 @@ if __name__ == "__main__":
             continue
 
     end_time = time.monotonic()
-    print("Cell extraction time: {}".format(timedelta(seconds=end_time - start_time)))
+    logging.info("cells extraction time: {}".format(timedelta(seconds=end_time - start_time)))
