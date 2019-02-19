@@ -16,13 +16,13 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-import matplotlib.patches as mpatches
+
 
 from scipy import ndimage
 from datetime import timedelta
 
 
-def detections_cells(image):
+def detect_cells(image):
 
     # perform pyramid mean shift filtering
     # to aid the thresholding step
@@ -51,7 +51,7 @@ def detections_cells(image):
     markers = ndimage.label(local_max, structure=np.ones((3, 3)))[0]
     labels = morphology.watershed(-d, markers, mask=thresh)
     
-    # Remove lables too small
+    # Remove labels too small and too big
     filtered_labels = np.copy(labels)
     component_sizes = np.bincount(labels.ravel())
     too_small = component_sizes < 1000
@@ -65,23 +65,17 @@ def detections_cells(image):
     return filtered_labels
 
 
-def extraction_cells(image, k, outPath):
+def extract_cells(image, image_index, out_path):
 
-    print("Saving extracted cells in:" + outPath)
-    filtered_labels = detections_cells(image)
+    print("Saving extracted cells in:" + out_path)
+    filtered_labels = detect_cells(image)
 
-    for i, region in enumerate(regionprops(filtered_labels)):
+    regions = regionprops(filtered_labels)
+    for i, region in enumerate(regions[1:]): #jump the first region (regions[0]) because is the entire image
 
-        # draw circle around cells
         minr, minc, maxr, maxc = region.bbox
-        x, y = region.centroid
-        diam = region.equivalent_diameter
-        circle = mpatches.Circle((y, x), radius=diam,
-                                 fill=False, edgecolor='red', linewidth=2)
-        # ax.add_patch(circle)
 
-        # Transform the region to crop from rectangular
-        # to square
+        # Transform the region to crop from rectangular to square
         x_side = maxc - minc
         y_side = maxr - minr
         if x_side > y_side:
@@ -95,12 +89,9 @@ def extraction_cells(image, k, outPath):
 
         cell = image[minr:maxr + 20, minc:maxc + 20]  # crop image
 
-        if i != 0:
-            filepath = os.path.join(outpath, "Img#" + str(k) + "_cell#" + str(i) + ".png")
-            print(filepath)
-            io.imsave(filepath, cell)
-
-# Main execution
+        filepath = os.path.join(out_path, "Img#" + str(image_index) + "_cell#" + str(i) + ".png")
+        io.imsave(filepath, cell)
+        print(filepath)
 
 
 if __name__ == "__main__":
@@ -109,11 +100,10 @@ if __name__ == "__main__":
     config.read("config.ini")
     start_time = time.monotonic()
 
+    inpath = config['Paths']['input_dir']
+    outpath = config['Paths']['cells_dir']
 
-    path = os.path.join(os.getcwd(), config['Paths']['input_dir'])
-    outpath = os.path.join(os.getcwd(), config['Paths']['cells_dir'])
-
-    for i, infile in enumerate(glob.glob(os.path.join(path, '*.png'))):
+    for i, infile in enumerate(glob.glob(os.path.join(inpath, '*.png'))):
         print(infile)
 
         img_or = cv2.imread(infile)
@@ -122,7 +112,7 @@ if __name__ == "__main__":
         img_or = cv2.cvtColor(img_or, cv2.COLOR_BGR2RGB)
 
         try:
-            extraction_cells(img_or, i, outpath)
+            extract_cells(img_or, i, outpath)
         except ValueError:
             continue
 
