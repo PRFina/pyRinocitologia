@@ -15,20 +15,17 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Generate a pre-filled template file for dataset metadata")
 
-    # FIXME: fix mispelling error in the below section
     parser.add_argument("--show", action='store_true', help="Show file content in stdout")
     parser.add_argument("-o", "--outfile", default="info.json", help="Output file")
     parser.add_argument("-i", "--iteration", default="2", help="Project iteration which dataset belongs to")
-    parser.add_argument("-l", "--location", default="Policlino Bari", help="Location where data had been acquired")
+    parser.add_argument("-l", "--location", default="Policlinico di Bari", help="Location where data had been acquired")
     parser.add_argument("-m", "--magnification", default="1000x", help="Microscope magnification factor used in field acquisiton")
     parser.add_argument("-c", "--content", default="Nasal Smear", help="Content of slides where data is acquired from")
     parser.add_argument("-t", "--technique", default="Cytospin", help="Any technique used in data preparation phase")
     parser.add_argument("-s", "--staining", default="MGG", help="Staining used in data preparation phase")
-    parser.add_argument("-p", "--people", nargs="+", default=["Dott. Matteo Gelardi", "Pio Raffale Fina", "Francesco Troccoli"], help="People that contibuted to the dataset")
+    parser.add_argument("-p", "--people", nargs="+", default=["Dott. Matteo Gelardi", "Pio Raffale Fina", "Francesco Troccoli"], help="People that contributed to the dataset")
     parser.add_argument("--extra", nargs="+", help="List of <key>:<value> to add to the file")
 
-    # TODO: add argument to parse an arbitrary list of <key>:<value> and add to metadata dict
-    # eg: python generate_dataset_info --extra "key#1:val#1"
     args = vars(parser.parse_args())  # parse and build arguments dict
 
     datetime = dt.datetime.now()
@@ -47,6 +44,7 @@ if __name__ == "__main__":
     metadata["staining"] = args["staining"]
     metadata["people"] = args["people"]
 
+    # Add "extra" arguments value to the dict
     pairs = args["extra"]
     if pairs is not None:
         for pair in pairs:
