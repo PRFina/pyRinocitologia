@@ -1,7 +1,7 @@
 # pyRinocitologia
 
 Central repository for Rinocitologia project developed as an undergraduate thesis.
-The purpose of this repository is to contains all development code allowing
+The purpose of this repository is to contains all development code allowing...
 
 
 
@@ -11,8 +11,7 @@ The purpose of this repository is to contains all development code allowing
 * Process automation
 * Explicit is better than implicit
 * Infrastructure built around data
-
-(nothing new! based on: [12factor](https://12factor.net/) & [cookiecutter data science](http://drivendata.github.io/cookiecutter-data-science/))
+* Prefer cross-platform solution
 
 ## Data Gathering 
 
@@ -21,7 +20,13 @@ The purpose of this repository is to contains all development code allowing
 ![](https://drive.google.com/uc?id=1DLjIHESDzRHFE9W1zJzMDOFPxOe6otdL)
 
 ### Tools
-Various utilities script has been developed
+Various utilities script has been developed. 
+
+* *metadata_generator.py* 
+is a small command line utility to help in generate a dataset metadata json file. for more info:
+```bash
+python metadata_generator.py --help
+```
 
 ###### note:
 image annotation tool : [VGG Image Annotation (VIA)](http://www.robots.ox.ac.uk/~vgg/software/via/)
