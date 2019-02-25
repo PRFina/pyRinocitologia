@@ -15,4 +15,7 @@ mucipare_dir: %(output_dir)s/mucipare
 neutrofili_dir: %(output_dir)s/neutrofili
 others_dir: %(output_dir)s/others
 
+[Models]
 models_dir: models
+classifier: %(models_dir)s/my_model.h5
+classifier_weights: %(models_dir)s/weights.best.hdf5
