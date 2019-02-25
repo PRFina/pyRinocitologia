@@ -5,7 +5,7 @@ import numpy as np
 import shutil
 
 from keras.models import load_model
-from config import APP_CONFIG
+
 
 
 def get_class_name(classNum):
@@ -45,8 +45,7 @@ def load_data(data_directory):
                       if f.endswith('.png') or f.endswith('.PNG')]
             for f in file_names:
                 img = cv2.imread(f)
-                (b, g, r) = cv2.split(img)
-                img = cv2.merge([r, g, b])
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 img = cv2.resize(img, (50, 50))
                 images.append(img)
 

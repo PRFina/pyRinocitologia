@@ -2,7 +2,7 @@
 # if data_root is empty all data will be saved in current working directory
 data_dir: data
 
-assets: %(data_dir)sassets
+assets: %(data_dir)s/assets
 input_dir: %(assets)s/input
 cells_dir: %(assets)s/cellule
 output_dir: %(assets)s/out
