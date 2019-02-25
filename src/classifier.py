@@ -1,14 +1,12 @@
 # Import libraries and modules
-import cv2
 import os
 from os import path
 import numpy as np
 import shutil
 import configparser
+import skimage
 
 from keras.models import load_model
-
-# TODO: eplace with config. file
 
 def get_class_path(classNum, config):
     # convert the cell-class number into its name string.
@@ -30,10 +28,10 @@ def get_class_path(classNum, config):
 
 def load_resize_img(img_path):
 
-    img = cv2.imread(img_path)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = skimage.io.imread(img_path)
+    img = skimage.img_as_float32(img)
 
-    return cv2.resize(img, (50, 50))
+    return skimage.transform.resize(img, (50, 50))
 
 
 def load_data(cell_directory):
@@ -62,11 +60,8 @@ if __name__ == "__main__":
     # load cell images
     images, file_names = load_data(config["Paths"]["cells_dir"])
 
-    # TODO: review the code below, use skimage functions to convert and optimize the code
     # images to multi dimensional arrays
     images = np.array(images)
-    images = images.astype("float32")
-    images /= 255
     images = images.reshape(images.shape[0], 50, 50, 3)
 
     out_path = config["Paths"]["output_dir"]
