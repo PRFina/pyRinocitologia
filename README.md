@@ -20,21 +20,23 @@ The purpose of this repository is to contains all development code allowing...
 
 .
 |
-+--- data   
++--- data                       data used by code 
 |   
-+--- models
++--- models                     pre-trained models and stored weights
 |    
-+--- notebooks
++--- notebooks                  jupyter notebooks for analisys and experiments
 |    
-+--- src
++--- report                     resources used for documentation 
 |    
-+--- tools
++--- src                        main code
 |    
-+--- config.ini.example
++--- tools                      code for misc utilities
+|    
++--- config.ini.example         configuration file  
 |     
 +--- README.md
 |     
-+--- requirements.txt
++--- requirements.txt           python pip dependencies file
 ```
 
 
@@ -59,9 +61,12 @@ The purpose of this repository is to contains all development code allowing...
 ## Data Gathering 
 
 
-#### Data Gathering Workflow Diagram
-![](https://drive.google.com/uc?id=1DLjIHESDzRHFE9W1zJzMDOFPxOe6otdL)
+#### Data Gathering Workflow
+![](report/workflow_diagram.png)
 
+
+#### Execution Flow
+![](report/execution_flow_diagram.png)
 ### Tools
 Various utilities script has been developed. 
 
