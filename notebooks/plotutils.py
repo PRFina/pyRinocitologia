@@ -26,5 +26,31 @@ def box_annotator(axes, region, label, **kwargs):
 def label_annotator(axes, region, label, **kwargs):
     x, y = region.centroid
     d = region.equivalent_diameter
+
+    #x += d x-offset
+    #y -= d y-offset
+
     txt = "Cell#"+str(label)
     axes.text(y, x, txt, **kwargs)
+
+"""
+nsamples = 100
+x = np.linspace(0, 10, nsamples)
+
+f, axs = plt.subplots(nrows=3, ncols=1, sharey=True, sharex=True)
+alpha = 0.2
+for k, ax in enumerate(axs.flatten()):
+    for i in range(0, 9):
+        if i == k:
+            alpha *= 5
+        y = np.random.rand(nsamples)
+        y = np.sin(x * 0.5 + i) + y * 0.25
+        ax.plot(x, y, label=str(i), alpha=alpha)
+        ax.set_xlabel("aas")
+
+        alpha = 0.2
+
+f.tight_layout()
+f.savefig("example.pgf")
+f.savefig("example.pdf")
+"""

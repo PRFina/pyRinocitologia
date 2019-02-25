@@ -13,6 +13,49 @@ The purpose of this repository is to contains all development code allowing...
 * Infrastructure built around data
 * Prefer cross-platform solution
 
+
+## Directory Structure
+
+```
+
+.
+|
++--- data   
+|   
++--- models
+|    
++--- notebooks
+|    
++--- src
+|    
++--- tools
+|    
++--- config.ini.example
+|     
++--- README.md
+|     
++--- requirements.txt
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Data Gathering 
 
 

@@ -25,7 +25,7 @@ def markdown_table_formatter(info_dict):
 
 def display_dataset_metadata(dataset_path, formatter, info_file="metainfo.json"):
     """
-    Utility function to display dynamic message in jupyter notebook cell.
+    Utility function to display dynamic message in notebooks notebook cell.
 
     """
     file_path = path.join(dataset_path, info_file)

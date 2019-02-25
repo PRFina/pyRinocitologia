@@ -1,7 +1,8 @@
 [Paths]
 # if data_root is empty all data will be saved in current working directory
-data_root:
-assets: %(data_root)sassets
+data_dir: data
+
+assets: %(data_dir)sassets
 input_dir: %(assets)s/input
 cells_dir: %(assets)s/cellule
 output_dir: %(assets)s/out
@@ -13,3 +14,5 @@ mastcellule_dir: %(output_dir)s/mastcellule
 mucipare_dir: %(output_dir)s/mucipare
 neutrofili_dir: %(output_dir)s/neutrofili
 others_dir: %(output_dir)s/others
+
+models_dir: models
