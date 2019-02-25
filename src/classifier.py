@@ -62,7 +62,6 @@ if __name__ == "__main__":
 
     # images to multi dimensional arrays
     images = np.array(images)
-    images = images.reshape(images.shape[0], 50, 50, 3)
 
     out_path = config["Paths"]["output_dir"]
 
