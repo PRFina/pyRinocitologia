@@ -3,7 +3,6 @@
 # OpenCv library
 # ---------------------------------------------------
 
-import glob
 import os
 import time
 import logging
@@ -17,14 +16,12 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
+from load import get_file_by_extensions
 
 
-def search_file_by_extensions(path, allowed_extensions, sep=";"):
-    files = []
-    for extension in allowed_extensions.split(sep):
-        files.extend(glob.glob(os.path.join(path, "*" + extension)))
+LOW_THRESHOLD_SIZE = 1000
+HIGH_THRESHOLD_SIZE = 15000
 
-    return files
 
 def detect_cells(image):
 
@@ -58,13 +55,12 @@ def detect_cells(image):
     # Remove labels too small and too big
     filtered_labels = np.copy(labels)
     component_sizes = np.bincount(labels.ravel())
-    # TODO: remove magic constant (1000) and retrieve from config. file or define a costant in this file
-    too_small = component_sizes < 1000
+
+    too_small = component_sizes < LOW_THRESHOLD_SIZE
     too_small_mask = too_small[labels]
     filtered_labels[too_small_mask] = 1
 
-    # TODO: remove magic constant (1500) and retrieve from config. file or define a costant in this file
-    too_big = component_sizes > 15000
+    too_big = component_sizes > HIGH_THRESHOLD_SIZE
     too_big_mask = too_big[labels]
     filtered_labels[too_big_mask] = 1
 
@@ -115,7 +111,7 @@ if __name__ == "__main__":
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
 
-    files = search_file_by_extensions(inpath, config["Misc"]["input_img_extensions"])
+    files = get_file_by_extensions(inpath, config["Misc"]["input_img_extensions"])
 
     if not files:
         logging.error("{} directory is empty! No image to process".format(inpath))
