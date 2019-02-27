@@ -5,8 +5,12 @@ import numpy as np
 import shutil
 import configparser
 import skimage
-
+from load import get_file_by_extensions
 from keras.models import load_model
+
+INPUT_IMAGE_WIDTH = 50
+INPUT_IMAGE_HEIGHT = 50
+
 
 def get_class_path(classNum, config):
     # convert the cell-class number into its name string.
@@ -27,11 +31,10 @@ def get_class_path(classNum, config):
 
 
 def load_resize_img(img_path):
-
     img = skimage.io.imread(img_path)
     img = skimage.img_as_float32(img)
 
-    return skimage.transform.resize(img, (50, 50))
+    return skimage.transform.resize(img, (INPUT_IMAGE_WIDTH, INPUT_IMAGE_HEIGHT))
 
 
 def load_data(cell_directory):
@@ -41,8 +44,8 @@ def load_data(cell_directory):
     :param cell_directory: directory path with extracted cell images
     :return: images, image'names
     """
-    file_names = [path.join(cell_directory, img_name) for img_name in os.listdir(cell_directory)
-                  if img_name.endswith('.png') or img_name.endswith('.PNG')]
+
+    file_names = get_file_by_extensions(cell_directory, config["Misc"]["input_img_extensions"])
     images = [load_resize_img(img_name) for img_name in file_names]
 
     return images, file_names
