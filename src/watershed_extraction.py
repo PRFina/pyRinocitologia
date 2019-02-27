@@ -19,6 +19,13 @@ from skimage.measure import regionprops
 from skimage.feature import peak_local_max
 
 
+def search_file_by_extensions(path, allowed_extensions, sep=";"):
+    files = []
+    for extension in allowed_extensions.split(sep):
+        files.extend(glob.glob(os.path.join(path, "*" + extension)))
+
+    return files
+
 def detect_cells(image):
 
     # perform pyramid mean shift filtering
@@ -69,7 +76,7 @@ def extract_cells(image, image_index, out_path):
     filtered_labels = detect_cells(image)
 
     regions = regionprops(filtered_labels)
-    export_format = config["Misc"]["export_format"]
+    export_img_extension = config["Misc"]["export_img_extension"]
     for i, region in enumerate(regions[1:]): #jump the first region (regions[0]) because is the entire image
 
         minr, minc, maxr, maxc = region.bbox
@@ -88,7 +95,8 @@ def extract_cells(image, image_index, out_path):
 
         cell = image[minr:maxr + 20, minc:maxc + 20]  # crop image
 
-        img_name = "img#" + str(image_index) + "_cell#" + str(i) + export_format
+        # save the image
+        img_name = "img#" + str(image_index) + "_cell#" + str(i) + export_img_extension
         filepath = os.path.join(out_path, img_name)
         io.imsave(filepath, cell)
 
@@ -107,7 +115,8 @@ if __name__ == "__main__":
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
 
-    files = glob.glob(os.path.join(inpath, "*"+config["Misc"]["export_format"]))
+    files = search_file_by_extensions(inpath, config["Misc"]["input_img_extensions"])
+
     if not files:
         logging.error("{} directory is empty! No image to process".format(inpath))
 
