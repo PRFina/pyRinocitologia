@@ -19,7 +19,7 @@ def load_resize_img(img_path):
     return skimage.transform.resize(img, (INPUT_IMAGE_WIDTH, INPUT_IMAGE_HEIGHT))
 
 
-def load_data(cell_directory):
+def load_data(cell_pathectory):
 
     """
     Loading images and labels from cell directory
@@ -44,12 +44,12 @@ if __name__ == "__main__":
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
     # load cell images
-    images, file_names = load_data(data_manager.cells_dir)
+    images, file_names = load_data(data_manager.cells_path)
 
     # images to multi dimensional arrays
     images = np.array(images)
 
-    out_path = data_manager.out_dir
+    out_path = data_manager.out_path
 
     for i, (img, img_name) in enumerate(zip(images, file_names)):
         img = img.reshape((1,)+img.shape)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         img_class = model.predict_classes(img)
 
         # define the path of its folder-class (classify the image).
-        class_path = data_manager.get_cell_class_dir(img_class[0])
+        class_path = data_manager.get_cell_class_path(img_class[0])
 
         # move it to the correct destination.
         shutil.move(img_name, class_path)

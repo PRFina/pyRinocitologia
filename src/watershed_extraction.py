@@ -106,8 +106,8 @@ if __name__ == "__main__":
     data_manager = DataManager(config["Paths"]["assets"])
     start_time = time.monotonic()
 
-    inpath = data_manager.input_dir
-    outpath = data_manager.cells_dir
+    inpath = data_manager.input_path
+    outpath = data_manager.cells_path
 
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
