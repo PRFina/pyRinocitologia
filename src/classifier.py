@@ -36,7 +36,7 @@ def load_data(cell_pathectory):
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.ini")
-    data_manager = DataManager(config["Paths"]["assets"])
+    data_manager = DataManager.from_file()
 
     # load the trained model.
     model = load_model(config["Models"]["classifier"])

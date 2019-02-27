@@ -1,5 +1,6 @@
 import glob
 import os
+import configparser
 
 
 class DataManager:
@@ -19,6 +20,21 @@ class DataManager:
                          4: "linfociti",
                          5: "mucipare",
                          6: "others"}
+
+    @classmethod
+    def from_file(cls, config_file="config.ini"):
+        config = configparser.ConfigParser()
+        config.read(config_file)
+
+        data_manager = cls(config["Paths"]["assets"])
+        data_manager.input_path = config["Paths"]["input_path"]
+        data_manager.cells_path = config["Paths"]["cells_path"]
+        data_manager.out_path = config["Paths"]["output_path"]
+
+        data_manager._allowed_input_extensions = config["Misc"]["input_img_extensions"].split(";")
+        data_manager._allowed_output_extensions = config["Misc"]["export_img_extension"].split(";")
+
+        return data_manager
 
     @staticmethod
     def get_file_by_extensions(path, allowed_extensions):

@@ -103,7 +103,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s")
     config = configparser.ConfigParser()
     config.read("config.ini")
-    data_manager = DataManager(config["Paths"]["assets"])
+    data_manager = DataManager.from_file()
     start_time = time.monotonic()
 
     inpath = data_manager.input_path
