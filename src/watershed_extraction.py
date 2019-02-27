@@ -51,10 +51,12 @@ def detect_cells(image):
     # Remove labels too small and too big
     filtered_labels = np.copy(labels)
     component_sizes = np.bincount(labels.ravel())
+    # TODO: remove magic constant (1000) and retrieve from config. file or define a costant in this file
     too_small = component_sizes < 1000
     too_small_mask = too_small[labels]
     filtered_labels[too_small_mask] = 1
 
+    # TODO: remove magic constant (1500) and retrieve from config. file or define a costant in this file
     too_big = component_sizes > 15000
     too_big_mask = too_big[labels]
     filtered_labels[too_big_mask] = 1
@@ -67,6 +69,7 @@ def extract_cells(image, image_index, out_path):
     filtered_labels = detect_cells(image)
 
     regions = regionprops(filtered_labels)
+    export_format = config["Misc"]["export_format"]
     for i, region in enumerate(regions[1:]): #jump the first region (regions[0]) because is the entire image
 
         minr, minc, maxr, maxc = region.bbox
@@ -85,7 +88,7 @@ def extract_cells(image, image_index, out_path):
 
         cell = image[minr:maxr + 20, minc:maxc + 20]  # crop image
 
-        img_name = "img#" + str(image_index) + "_cell#" + str(i) + ".png"
+        img_name = "img#" + str(image_index) + "_cell#" + str(i) + export_format
         filepath = os.path.join(out_path, img_name)
         io.imsave(filepath, cell)
 
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
 
-    files = glob.glob(os.path.join(inpath, '*.png'))
+    files = glob.glob(os.path.join(inpath, "*"+config["Misc"]["export_format"]))
     if not files:
         logging.error("{} directory is empty! No image to process".format(inpath))
 
