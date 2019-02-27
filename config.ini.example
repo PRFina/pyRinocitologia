@@ -1,24 +1,24 @@
 [Paths]
-# if data_root is empty all data will be saved in current working directory
-data_dir: data
+# if data_root is empty all data will be saved in current working pathectory
+data_path: data
 
-assets: %(data_dir)s/assets
-input_dir: %(assets)s/input
-cells_dir: %(assets)s/cellule
-output_dir: %(assets)s/out
+assets: %(data_path)s/assets
+input_path: %(assets)s/input
+cells_path: %(assets)s/cells
+output_path: %(assets)s/out
 
-eosinofili_dir: %(output_dir)s/eosinofili
-epiteliali_dir: %(output_dir)s/epiteliali
-linfociti_dir: %(output_dir)s/linfociti
-mastcellule_dir: %(output_dir)s/mastcellule
-mucipare_dir: %(output_dir)s/mucipare
-neutrofili_dir: %(output_dir)s/neutrofili
-others_dir: %(output_dir)s/others
+eosinofili_path: %(output_path)s/eosinofili
+epiteliali_path: %(output_path)s/epiteliali
+linfociti_path: %(output_path)s/linfociti
+mastcellule_path: %(output_path)s/mastcellule
+mucipare_path: %(output_path)s/mucipare
+neutrofili_path: %(output_path)s/neutrofili
+others_path: %(output_path)s/others
 
 [Models]
-models_dir: models
-classifier: %(models_dir)s/my_model.h5
-classifier_weights: %(models_dir)s/weights.best.hdf5
+models_path: models
+classifier: %(models_path)s/my_model.h5
+classifier_weights: %(models_path)s/weights.best.hdf5
 
 [Misc]
 input_img_extensions: .png;.PNG;.jpeg;.JPEG;.jpg;.JPG
