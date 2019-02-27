@@ -16,7 +16,7 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-from load import get_file_by_extensions
+from data_manager import DataManager
 
 
 LOW_THRESHOLD_SIZE = 1000
@@ -72,7 +72,7 @@ def extract_cells(image, image_index, out_path):
     filtered_labels = detect_cells(image)
 
     regions = regionprops(filtered_labels)
-    export_img_extension = config["Misc"]["export_img_extension"]
+    export_img_extension = data_manager.get_output_extension()
     for i, region in enumerate(regions[1:]): #jump the first region (regions[0]) because is the entire image
 
         minr, minc, maxr, maxc = region.bbox
@@ -103,15 +103,16 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s")
     config = configparser.ConfigParser()
     config.read("config.ini")
+    data_manager = DataManager(config["Paths"]["assets"])
     start_time = time.monotonic()
 
-    inpath = config['Paths']['input_dir']
-    outpath = config['Paths']['cells_dir']
+    inpath = data_manager.input_dir
+    outpath = data_manager.cells_dir
 
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
 
-    files = get_file_by_extensions(inpath, config["Misc"]["input_img_extensions"])
+    files = data_manager.get_input_images()
 
     if not files:
         logging.error("{} directory is empty! No image to process".format(inpath))

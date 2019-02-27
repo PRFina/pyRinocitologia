@@ -5,29 +5,11 @@ import numpy as np
 import shutil
 import configparser
 import skimage
-from load import get_file_by_extensions
+from data_manager import DataManager
 from keras.models import load_model
 
 INPUT_IMAGE_WIDTH = 50
 INPUT_IMAGE_HEIGHT = 50
-
-
-def get_class_path(classNum, config):
-    # convert the cell-class number into its name string.
-    if classNum == 0:
-        return config["Paths"]["epiteliali_dir"]
-    if classNum == 1:
-        return config["Paths"]["neutrofili_dir"]
-    if classNum == 2:
-        return config["Paths"]["eosinofili_dir"]
-    if classNum == 3:
-        return config["Paths"]["mastcellule_dir"]
-    if classNum == 4:
-        return config["Paths"]["linfociti_dir"]
-    if classNum == 5:
-        return config["Paths"]["mucipare_dir"]
-    if classNum == 6:
-        return config["Paths"]["others_dir"]
 
 
 def load_resize_img(img_path):
@@ -45,7 +27,7 @@ def load_data(cell_directory):
     :return: images, image'names
     """
 
-    file_names = get_file_by_extensions(cell_directory, config["Misc"]["input_img_extensions"])
+    file_names = data_manager.get_cells_images()
     images = [load_resize_img(img_name) for img_name in file_names]
 
     return images, file_names
@@ -54,6 +36,7 @@ def load_data(cell_directory):
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.ini")
+    data_manager = DataManager(config["Paths"]["assets"])
 
     # load the trained model.
     model = load_model(config["Models"]["classifier"])
@@ -61,12 +44,12 @@ if __name__ == "__main__":
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
     # load cell images
-    images, file_names = load_data(config["Paths"]["cells_dir"])
+    images, file_names = load_data(data_manager.cells_dir)
 
     # images to multi dimensional arrays
     images = np.array(images)
 
-    out_path = config["Paths"]["output_dir"]
+    out_path = data_manager.out_dir
 
     for i, (img, img_name) in enumerate(zip(images, file_names)):
         img = img.reshape((1,)+img.shape)
@@ -74,7 +57,7 @@ if __name__ == "__main__":
         img_class = model.predict_classes(img)
 
         # define the path of its folder-class (classify the image).
-        class_path = get_class_path(img_class, config)
+        class_path = data_manager.get_cell_class_dir(img_class[0])
 
         # move it to the correct destination.
         shutil.move(img_name, class_path)
