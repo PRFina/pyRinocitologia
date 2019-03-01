@@ -43,7 +43,7 @@ class DataManager:
     def get_file_by_extensions(path, allowed_extensions):
         files = []
         for extension in allowed_extensions:
-            files.extend(path.glob("*" + extension))
+            files.extend([str(path) for path in path.glob("*" + extension)])
         return files
 
     def get_input_images(self):
