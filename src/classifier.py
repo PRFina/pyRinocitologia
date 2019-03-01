@@ -44,12 +44,12 @@ if __name__ == "__main__":
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
     # load cell images
-    images, file_names = load_data(data_manager.cells_path)
+    images, file_names = load_data(data_manager.get_cells_path())
 
     # images to multi dimensional arrays
     images = np.array(images)
 
-    out_path = data_manager.out_path
+    out_path = data_manager.get_output_path()
 
     for i, (img, img_name) in enumerate(zip(images, file_names)):
         img = img.reshape((1,)+img.shape)

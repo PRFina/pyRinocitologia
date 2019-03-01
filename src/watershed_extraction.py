@@ -106,8 +106,8 @@ if __name__ == "__main__":
     data_manager = DataManager.from_file()
     start_time = time.monotonic()
 
-    inpath = data_manager.input_path
-    outpath = data_manager.cells_path
+    inpath = data_manager.get_input_path()
+    outpath = data_manager.get_cells_path()
 
     logging.info("input path: {}".format(inpath))
     logging.info("extracted cells will be saved in: {}".format(outpath))
