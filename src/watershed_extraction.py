@@ -23,7 +23,7 @@ LOW_THRESHOLD_SIZE = 1000
 HIGH_THRESHOLD_SIZE = 15000
 
 
-def detect_cells(image, return_steps=False):
+def detect_cells(field_image, return_steps=False):
 
     extraction_steps = namedtuple("ExtractionSteps", ["input", "meanshift",
                                                       "grayscale", "binary",
@@ -32,7 +32,7 @@ def detect_cells(image, return_steps=False):
                                                       ])
     # perform pyramid mean shift filtering
     # to aid the thresholding step
-    shifted = cv2.pyrMeanShiftFiltering(image, 21, 51)
+    shifted = cv2.pyrMeanShiftFiltering(field_image, 21, 51)
 
     # convert the mean shift image to grayscale, then apply
     # Otsu's thresholding
@@ -70,10 +70,10 @@ def detect_cells(image, return_steps=False):
     filtered_labels[too_big_mask] = 1
 
     if return_steps:
-        return extraction_steps(input=image, meanshift=shifted,
-                             grayscale=gray, binary=binary,
-                             dilation=dilated, distance=dist_map,
-                             labels=labels, filtered_labels=filtered_labels)
+        return extraction_steps(input=field_image, meanshift=shifted,
+                                grayscale=gray, binary=binary,
+                                dilation=dilated, distance=dist_map,
+                                labels=labels, filtered_labels=filtered_labels)
     return filtered_labels
 
 
