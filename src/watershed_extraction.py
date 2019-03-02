@@ -77,12 +77,11 @@ def detect_cells(image, return_steps=False):
     return filtered_labels
 
 
-def extract_cells(image, image_index, out_path):
+def extract_cells(cell_labels, image_index, out_path):
 
-    filtered_labels = detect_cells(image, return_steps=True)
-
-    regions = regionprops(filtered_labels.filtered_labels)
+    regions = regionprops(cell_labels)
     export_img_extension = data_manager.get_output_extension()
+
     for i, region in enumerate(regions[1:]):  # jump the first region (regions[0]) because is the entire image
 
         minr, minc, maxr, maxc = region.bbox
@@ -130,13 +129,14 @@ if __name__ == "__main__":
     for i, infile in enumerate(files):
         logging.info("processing {} image".format(infile))
 
-        img_or = cv2.imread(infile)
+        image = cv2.imread(infile)
 
         # transform the color scheme to RGB
-        img_or = cv2.cvtColor(img_or, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         try:
-            extract_cells(img_or, i, outpath)
+            labels = detect_cells(image)
+            extract_cells(labels, i, outpath)
         except ValueError:
             continue
 
