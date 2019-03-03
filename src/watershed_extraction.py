@@ -16,9 +16,10 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-from data_manager import DataManager
+from src.data_manager import DataManager
 from collections import  namedtuple
-
+import matplotlib as mpl
+mpl.cm
 LOW_THRESHOLD_SIZE = 1000
 HIGH_THRESHOLD_SIZE = 15000
 
@@ -28,7 +29,8 @@ def detect_cells(field_image, return_steps=False):
     extraction_steps = namedtuple("ExtractionSteps", ["input", "meanshift",
                                                       "grayscale", "binary",
                                                       "dilation", "distance",
-                                                      "labels", "filtered_labels"
+                                                      "markers", "labels",
+                                                      "filtered_labels"
                                                       ])
     # perform pyramid mean shift filtering
     # to aid the thresholding step
@@ -73,7 +75,8 @@ def detect_cells(field_image, return_steps=False):
         return extraction_steps(input=field_image, meanshift=shifted,
                                 grayscale=gray, binary=binary,
                                 dilation=dilated, distance=dist_map,
-                                labels=labels, filtered_labels=filtered_labels)
+                                markers=markers, labels=labels,
+                                filtered_labels=filtered_labels)
     return filtered_labels
 
 
