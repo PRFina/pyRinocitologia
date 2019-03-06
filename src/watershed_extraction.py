@@ -127,7 +127,7 @@ if __name__ == "__main__":
         logging.error("{} directory is empty! No image to process".format(inpath))
 
     for i, infile in enumerate(files):
-        logging.info("processing {} image".format(infile))
+        logging.info("detecting cells in {} image".format(infile))
 
         image = cv2.imread(infile)
 
