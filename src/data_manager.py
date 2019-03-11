@@ -11,7 +11,7 @@ class DataManager:
         self.input_path = self.assets_path / "input"
         self.cells_path = self.assets_path / "cells"
         self.out_path = self.assets_path / "out"
-        self._allowed_input_extensions = [".png", ".PNG", ".jpeg", ".JPEG", ".jpg", ".JPG"]
+        self._allowed_input_extensions = [".png", ".jpeg", ".jpg"]
         self._allowed_output_extensions = [".png"]
 
         self._classes = {0: "epiteliali",

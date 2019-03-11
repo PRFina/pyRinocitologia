@@ -21,5 +21,5 @@ classifier: %(models_path)s/my_model.h5
 classifier_weights: %(models_path)s/weights.best.hdf5
 
 [Misc]
-input_img_extensions: .png;.PNG;.jpeg;.JPEG;.jpg;.JPG
+input_img_extensions: .png;.jpeg;.jpg;
 export_img_extension: .png
