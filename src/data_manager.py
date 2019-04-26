@@ -5,8 +5,19 @@ from pathlib import  Path
 
 
 class DataManager:
+    """
+    Manage IO files path helping to retrieve information about how and where
+    images data is stored/will be stored.
+
+    This class allows decoupling of IO file path operations
+    with "core code" for cells extraction and classification.
+    """
 
     def __init__(self, assets_path_str):
+        """
+        Build a DataManager instance with hardcoded default settings.
+        :param assets_path_str: root path of the DataManager instance.
+        """
         self.assets_path = Path(assets_path_str)
         self.input_path = self.assets_path / "input"
         self.cells_path = self.assets_path / "cells"
@@ -26,6 +37,11 @@ class DataManager:
 
     @classmethod
     def from_file(cls, config_file="config.ini"):
+        """
+        Build a DataManager instance from a configuration file.
+        :param config_file: the configuration file
+        :return: a DataManager instance
+        """
         config = configparser.ConfigParser()
         config.read(config_file)
 

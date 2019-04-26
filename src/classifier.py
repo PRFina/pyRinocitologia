@@ -1,64 +1,76 @@
-# Import libraries and modules
-import os
-from os import path
-import numpy as np
+
 import shutil
 import configparser
 import skimage
 from data_manager import DataManager
 from keras.models import load_model
 
-INPUT_IMAGE_WIDTH = 50
-INPUT_IMAGE_HEIGHT = 50
 
+class Classifier:
 
-def load_resize_img(img_path):
-    img = skimage.io.imread(img_path)
-    img = skimage.img_as_float32(img)
+    INPUT_IMAGE_WIDTH = 50
+    INPUT_IMAGE_HEIGHT = 50
 
-    return skimage.transform.resize(img, (INPUT_IMAGE_WIDTH, INPUT_IMAGE_HEIGHT))
+    def __init__(self, config_file, data_mngr):
 
+        config = configparser.ConfigParser()
+        config.read(config_file)
 
-def load_data(cell_pathectory):
+        # load the trained model.
+        self.model = load_model(config["Models"]["classifier"])
+        self.model.load_weights(config["Models"]["classifier_weights"])
+        self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
-    """
-    Loading images and labels from cell directory
-    :param cell_directory: directory path with extracted cell images
-    :return: images, image'names
-    """
+        self.data_manager = data_mngr
 
-    file_names = data_manager.get_cells_images()
-    images = [load_resize_img(img_name) for img_name in file_names]
+    @staticmethod
+    def pre_process_image(img_path):
+        """
+        Apply image transformations to adapt input images to model input
+        :param img_path:
+        :return:
+        """
+        img = skimage.io.imread(img_path)
+        img = skimage.img_as_float32(img)
+        img = skimage.transform.resize(img, (Classifier.INPUT_IMAGE_WIDTH, Classifier.INPUT_IMAGE_HEIGHT))
 
-    return images, file_names
+        return img.reshape((1,) + img.shape)  # add one dimension, needed for keras conv2d input layer
+
+    def load_images(self):
+
+        """
+        Utility method to load cells images and apply pre-transformations
+        :return: list of tuples: (image RGB ndarray, image file name)
+        """
+
+        file_names = self.data_manager.get_cells_images()
+        images = [Classifier.pre_process_image(img_name) for img_name in file_names]
+
+        return images, file_names
+
+    def classify(self, cell_image, cell_image_name):
+
+        img = cell_image
+        img_class = self.model.predict_classes(img)
+
+        # define the path of its folder-class (classify the image).
+        class_path = self.data_manager.get_cell_class_path(img_class[0])
+
+        # move it to the correct destination.
+        shutil.move(cell_image_name, class_path)
+
+        return img_class[0]
+
+    def batch_process(self):
+
+        # load cell images
+        images, file_names = self.load_images()
+
+        for i, (img, img_name) in enumerate(zip(images, file_names)):
+            cell_class = self.classify(img, img_name)
+            print("Predict class for image {}: {}".format(file_names[i], self.data_manager.get_cell_class_path(cell_class)))
 
 
 if __name__ == "__main__":
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    data_manager = DataManager.from_file()
-
-    # load the trained model.
-    model = load_model(config["Models"]["classifier"])
-    model.load_weights(config["Models"]["classifier_weights"])
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
-
-    # load cell images
-    images, file_names = load_data(data_manager.get_cells_path())
-
-    # images to multi dimensional arrays
-    images = np.array(images)
-
-    out_path = data_manager.get_output_path()
-
-    for i, (img, img_name) in enumerate(zip(images, file_names)):
-        img = img.reshape((1,)+img.shape)
-        # add a dimension to the image
-        img_class = model.predict_classes(img)
-
-        # define the path of its folder-class (classify the image).
-        class_path = data_manager.get_cell_class_path(img_class[0])
-
-        # move it to the correct destination.
-        shutil.move(img_name, class_path)
-        print("Predict class for image {}: {}".format(file_names[i], class_path))
+    classifier = Classifier("config.ini", DataManager.from_file())
+    classifier.batch_process()
