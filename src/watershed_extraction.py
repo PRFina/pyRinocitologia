@@ -24,18 +24,35 @@ HIGH_THRESHOLD_SIZE = 15000
 
 
 class Extractor:
+    """
+    Detect and extract cells from a microscope field image.
 
+    This class have two main semantic use:
+    * "batch processor mode",  process each image retrieve using a DataManager instance and extract cells
+    * "prototype mode", using detect_cells and extract_cells method independently from data manager, allows
+    to quickly prototyping and experimentation.
+    """
     def __init__(self, data_manager):
+        """
+
+        :param data_manager: an instance of DataManager class
+        """
         self.data_manager = data_manager
+        self.images = self.data_manager.get_input_images()
 
     @staticmethod
-    def detect_cells(self, field_image, return_steps=False):
+    def detect_cells(field_image, return_steps=False):
+        """
 
+        :param field_image: a numpy ndarray instance of a 3 channel RGB image
+        :param return_steps: if True a namedtuple ExtractionSteps is filled with images of algorithm step
+        :return: a tuple of labels for each cell detected and namedtuple ExtractionSteps
+        """
         detection_steps = namedtuple("ExtractionSteps", ["input", "meanshift",
                                                           "grayscale", "binary",
                                                           "dilation", "distance",
                                                           "labels", "filtered_labels"
-                                                          ])
+                                                         ])
         # perform pyramid mean shift filtering
         # to aid the thresholding step
         shifted = cv2.pyrMeanShiftFiltering(field_image, 21, 51)
@@ -76,14 +93,26 @@ class Extractor:
         filtered_labels[too_big_mask] = 1
 
         if return_steps:
-            return detection_steps(input=field_image, meanshift=shifted,
-                                   grayscale=gray, binary=binary,
-                                   dilation=dilated, distance=dist_map,
-                                   labels=labels, filtered_labels=filtered_labels)
-        return filtered_labels
+            detection_steps(input=field_image, meanshift=shifted,
+                            grayscale=gray, binary=binary,
+                            dilation=dilated, distance=dist_map,
+                            labels=labels, filtered_labels=filtered_labels)
 
-    def extract_cells(self, field_image, cell_labels, outfile_name, out_path):
+        return filtered_labels, detection_steps
 
+    def extract_cells(self, field_image, cell_labels, file_name_prefix, out_path):
+        """
+        Given a microscope field image, extract each cell described with a label,
+        cropping from the original image and save on disk as new image.
+
+        Every cell image have a 1:1 aspect ratio and each image file name will be saved as:
+         <file_name_prefix>_cell#<label_index>_<file_extension>.
+
+        :param field_image: a numpy ndarray instance of a 3 channel RGB image
+        :param cell_labels: a numpy ndarray instance of labels describing detected cells
+        :param file_name_prefix: image file name's prefix string
+        :param out_path: file path where cell images will be saved
+        """
         regions = regionprops(cell_labels)
         export_img_extension = self.data_manager.get_output_extension()
 
@@ -106,13 +135,17 @@ class Extractor:
             cell = field_image[minr:maxr + 20, minc:maxc + 20]  # crop image
 
             # save the image
-            img_name = outfile_name + "_cell#" + str(i) + export_img_extension
+            img_name = file_name_prefix + "_cell#" + str(i) + export_img_extension
             filepath = os.path.join(out_path, img_name)
             io.imsave(filepath, cell)
 
             logging.info("extracted cell: {}".format(img_name))
 
     def batch_process(self):
+        """
+        Use a DataManager instance to retrieve information about images paths and for each image retrieved extract cells
+        images.
+        """
         logging.basicConfig(level=logging.INFO, format="[%(asctime)s] - [%(name)s] - [%(levelname)s] - %(message)s")
 
         start_time = time.monotonic()
@@ -123,12 +156,10 @@ class Extractor:
         logging.info("input path: {}".format(inpath))
         logging.info("extracted cells will be saved in: {}".format(outpath))
 
-        files = self.data_manager.get_input_images()
-
-        if not files:
+        if not self.images:
             logging.error("{} directory is empty! No image to process".format(inpath))
 
-        for i, infile in enumerate(files):
+        for i, infile in enumerate(self.images):
             logging.info("detecting cells in {} image".format(infile))
 
             image = cv2.imread(infile)
@@ -137,7 +168,7 @@ class Extractor:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             try:
-                labels = self.detect_cells(image)
+                labels, steps = self.detect_cells(image)
                 self.extract_cells(image, labels, "img#" + str(i), outpath)
             except ValueError:
                 continue
