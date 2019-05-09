@@ -8,6 +8,7 @@ import time
 import logging
 import configparser
 from datetime import timedelta
+from pathlib import Path
 
 import numpy as np
 from scipy import ndimage
@@ -169,7 +170,7 @@ class Extractor:
 
             try:
                 labels, steps = self.detect_cells(image)
-                self.extract_cells(image, labels, "img#" + str(i), outpath)
+                self.extract_cells(image, labels, Path(infile).stem, outpath)
             except ValueError:
                 continue
 
