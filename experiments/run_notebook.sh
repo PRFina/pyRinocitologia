@@ -2,4 +2,4 @@
 
 export PYTHONPATH="/home/prf/PycharmProjects/RinocitologiaPython"
 
-jupyter notebook
+jupyter lab
