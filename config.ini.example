@@ -17,7 +17,7 @@ others_path: %(output_path)s/others
 
 [Models]
 models_path: models
-classifier: %(models_path)s/my_model.h5
+classifier: %(models_path)s/classifier_cnn_model.h5
 classifier_weights: %(models_path)s/weights.best.hdf5
 
 [Misc]
