@@ -6,7 +6,6 @@
 import os
 import time
 import logging
-import configparser
 from datetime import timedelta
 from pathlib import Path
 
@@ -17,7 +16,7 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-from data_manager import DataManager
+from core.data_manager import DataManager
 from collections import namedtuple
 
 LOW_THRESHOLD_SIZE = 1000

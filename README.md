@@ -72,8 +72,6 @@ You can use your custom data or use our [Open Data Dataset](https://github.com/P
 ## Data Gathering 
 
 
-#### Data Gathering Workflow
-![](report/workflow_diagram.png)
 
 
 #### Execution Flow

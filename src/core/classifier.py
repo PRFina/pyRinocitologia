@@ -2,7 +2,7 @@
 import shutil
 import configparser
 import skimage
-from data_manager import DataManager
+from core.data_manager import DataManager
 from keras.models import load_model
 
 
