@@ -2,7 +2,8 @@
 import shutil
 import configparser
 import skimage
-from core.data_manager import DataManager
+from skimage import io, transform
+from src.core.data_manager import DataManager
 from keras.models import load_model
 
 
@@ -68,7 +69,7 @@ class Classifier:
 
         for i, (img, img_name) in enumerate(zip(images, file_names)):
             cell_class = self.classify(img, img_name)
-            print("Predict class for image {}: {}".format(file_names[i], self.data_manager.get_cell_class_path(cell_class)))
+            print("Predicted class for image {}: {}".format(img_name, self.data_manager.get_cell_class_path(cell_class)))
 
 
 if __name__ == "__main__":

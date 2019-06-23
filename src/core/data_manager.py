@@ -1,7 +1,5 @@
-import glob
-import os
 import configparser
-from pathlib import  Path
+from pathlib import Path
 
 
 class DataManager:
@@ -31,7 +29,7 @@ class DataManager:
                          3: "mastcellule",
                          4: "linfociti",
                          5: "mucipare",
-                         6: "others"}
+                         6: "altro"}
 
         self.classes_path = [self.out_path / class_name for class_name in self._classes.values()]
 

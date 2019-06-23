@@ -16,7 +16,7 @@ from skimage import morphology
 from skimage import io
 from skimage.measure import regionprops
 from skimage.feature import peak_local_max
-from core.data_manager import DataManager
+from src.core.data_manager import DataManager
 from collections import namedtuple
 
 LOW_THRESHOLD_SIZE = 1000
@@ -86,19 +86,20 @@ class Extractor:
 
         too_small = component_sizes < LOW_THRESHOLD_SIZE
         too_small_mask = too_small[labels]
-        filtered_labels[too_small_mask] = 1
+        filtered_labels[too_small_mask] = 0
 
-        too_big = component_sizes > HIGH_THRESHOLD_SIZE
+        too_big = component_sizes > HIGfilH_THRESHOLD_SIZE
         too_big_mask = too_big[labels]
-        filtered_labels[too_big_mask] = 1
+        filtered_labels[too_big_mask] = 0
 
+        steps = None
         if return_steps:
-            detection_steps(input=field_image, meanshift=shifted,
+            steps = detection_steps(input=field_image, meanshift=shifted,
                             grayscale=gray, binary=binary,
                             dilation=dilated, distance=dist_map,
                             labels=labels, filtered_labels=filtered_labels)
 
-        return filtered_labels, detection_steps
+        return filtered_labels, steps
 
     def extract_cells(self, field_image, cell_labels, file_name_prefix, out_path):
         """
@@ -116,7 +117,7 @@ class Extractor:
         regions = regionprops(cell_labels)
         export_img_extension = self.data_manager.get_output_extension()
 
-        for i, region in enumerate(regions[1:]):  # jump the first region (regions[0]) because is the entire image
+        for i, region in enumerate(regions):
 
             minr, minc, maxr, maxc = region.bbox
 
@@ -162,10 +163,7 @@ class Extractor:
         for i, infile in enumerate(self.images):
             logging.info("detecting cells in {} image".format(infile))
 
-            image = cv2.imread(infile)
-
-            # transform the color scheme to RGB
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image = io.imread(infile)
 
             try:
                 labels, steps = self.detect_cells(image)
