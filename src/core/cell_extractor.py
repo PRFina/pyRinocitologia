@@ -72,7 +72,7 @@ class Extractor:
         # pixel to the nearest zero pixel, then find peaks in this
         # distance map
         dist_map = ndimage.distance_transform_edt(dilated)
-        local_max = peak_local_max(dist_map, indices=False, min_distance=20,
+        local_max = peak_local_max(dist_map, indices=False, min_distance=30,
                                    labels=dilated)
 
         # perform a connected component analysis on the local peaks,
@@ -88,7 +88,7 @@ class Extractor:
         too_small_mask = too_small[labels]
         filtered_labels[too_small_mask] = 0
 
-        too_big = component_sizes > HIGfilH_THRESHOLD_SIZE
+        too_big = component_sizes > HIGH_THRESHOLD_SIZE
         too_big_mask = too_big[labels]
         filtered_labels[too_big_mask] = 0
 
